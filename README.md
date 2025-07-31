@@ -6,7 +6,7 @@ A CLI-based simulation of digital library system that supports basic CRUD operat
 
 ## Roles and Access  
 ### General  
-- Can see if a books is available for borrow  
+- Can see if a book is available for borrow  
 - Can know more details regarding the book or a user's borrow history
 - Can access information and know more details regarding a user, book or author  
 - Can get a list of books that an author has written  
@@ -18,14 +18,14 @@ A CLI-based simulation of digital library system that supports basic CRUD operat
 ### Librarians
 - Can create, delete, update user accounts and information  
 - Can add, remove, update book informations  
-- Can register, remove, and updat author-related informations  
+- Can register, remove, and update author-related informations  
 - Can create and edit borrow-related information  
 
 ---
 
 ## How Does It Work?  
 
-Honestly? IDK yet.  
+IDK yet.  
 Still a WIP. I kind of want to abandon this sht.  
 The service layer is giving me a headache.  
 Some methods work, but spaghetti code is lurking. Needs cleanup.  
