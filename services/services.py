@@ -139,8 +139,41 @@ class LibrarianServices(GeneralServices):
     def __init__(self, file='data/storage.json'):
         super().__init__(file)
 
+    def create_user(self):
+        ...
+
+    def update_user(self, name, field, new_value):
+        ...
+
+    def delete_user(self, name: str):
+        ...
+
+    
+    def add_book(self, title:str, author: str):
+        ...
+
+    def update_book(self, title, field, new_value):
+        ...
+
+    def delete_book(self, title: str):
+        ...
+
+    def update_author(self, name, field, new_value):
+        ...
+
+    def edit_borrow_info(self, book: str, name: str, field: str, new_value: str):
+        ...
+
+
+
 
 
 class MemberServices(GeneralServices):
     def __init__(self, file='data/storage.json'):
         super().__init__(file)
+
+    def borrow_book(self, title: str, user_name: str):
+        ...
+
+    def return_book(self, title: str, user_name: str):
+        ...
