@@ -6,12 +6,6 @@ class Check:
     def __init__(self, file='data/storage.json'):
         self.file = file
 
-        # Ensures that there is only one instance per data
-        self.accounts_data = AccountsData()
-        self.authors_data = AuthorsData()
-        self.library_data = LibraryData()
-        self.borrow_data = BorrowInfoData()
-
         with open(file, 'r') as f:
             self.data = json.load(f)
 
@@ -30,6 +24,7 @@ class Check:
         RETURNS:
             bool: True if item found (or exists), otherwise False. """
     def exists(self, username=None, book_title=None, author_name=None, borrow_info=None, field=None):
+
         if username in self.accounts:
             return True
         if book_title in self.library:
@@ -70,3 +65,23 @@ class Check:
     def is_valid(self, name=None, email=None, role=None, age=None):
         ...
 
+
+
+# List of all exceptions and errors
+class Error(Exception):
+    ...
+
+class EmptyValueError(Error):
+    ...
+
+class NameTaken(Error):
+    ...
+
+class NotFound(Error):
+    ...
+
+class InvalidAge(Error):
+    ...
+
+class InvalidField(Error):
+    ...
