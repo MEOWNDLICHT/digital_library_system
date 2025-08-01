@@ -1,4 +1,7 @@
 class User:
+    # For tracking total number of users
+    total_number = 0
+
     def __init__(self, username: str, email: str, age: int, id: str, role='Member', remaining_borrow=10, borrow_limit=10, borrowed_books=[]):
         self.username = username
         self.email = email
