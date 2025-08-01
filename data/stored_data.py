@@ -60,16 +60,13 @@ class AccountsData(DataHandling):
                                       'remaining_borrows': user.remaining_borrow,
                                       'borrow_limit': user.borrow_limit,
                                       'borrowed_books': user.borrowed_books}
-          self.save_changes()
 
      def delete_data(self, username: str):
           self.data['accounts'].pop(username)
-          self.save_changes()
 
      def update_data(self, data: list[str]):
           username, field, new_value = data
           self.data['accounts'][username][field] = new_value
-          self.save_changes()
          
           
 
@@ -84,16 +81,13 @@ class LibraryData(DataHandling):
                                   'genre': book.genre,
                                   'age_restriction': book.age_restriction,
                                   'is_available': book.is_available}
-         self.save_changes()
 
      def delete_data(self, book_title: str):
           self.data['library'].pop(book_title)
-          self.save_changes()
     
      def update_data(self, data: list[str]):
           book_title, field, new_value = data
           self.data['library'][book_title][field] = new_value
-          self.save_changes()
 
 
 
@@ -106,16 +100,14 @@ class AuthorsData(DataHandling):
                                    'birthday': author.birthday,
                                    'nationality': author.nationality,
                                    'books': author.books}
-         self.save_changes()
+
 
      def delete_data(self, author_name):
           self.data['authors'].pop(author_name)
-          self.save_changes()
 
      def update_data(self, data: list[str]):
           author_name, field, new_value = data
           self.data['authors'][author_name][field] = new_value
-          self.save_changes()
 
 
 
@@ -132,15 +124,12 @@ class BorrowInfoData(DataHandling):
                'borrowed_on': borrow.borrowed_on,
                'borrow_deadline': borrow.borrow_deadline,
                'returned_on': borrow.returned_on}
-          self.save_changes()
           
      def delete_data(self, data: list[str]):
           book_title, borrower = data
           self.data['borrow_data'][book_title].pop(borrower)
-          self.save_changes()
 
      def update_data(self, data: list[str]):
           book_title, borrower, field, new_value = data
           self.data['borrow_data'][book_title][borrower][field] = new_value
-          self.save_changes()
           
