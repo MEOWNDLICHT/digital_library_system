@@ -1,7 +1,7 @@
-from model import Book, User, Author
-from data import AccountsData, AuthorsData, LibraryData, BorrowData
-from services import generate_unique_id
-from error_handling import Check, NotFound, NameTaken, EmptyValueError, InvalidAge, InvalidChange
+from model import User, Book, Author, BorrowInfo
+from data import AccountsData, LibraryData, AuthorsData, BorrowData
+from .error_handling import Check, EmptyValueError, NotFound, NameTaken, InvalidAge, InvalidChange, InvalidEmail
+from .generate_id import generate_unique_id
 import json
 
 
@@ -30,11 +30,13 @@ class GeneralServices():
          RETURNS:
             bool: True if available, False otherwise.  """
     def is_available(self, title: str):
-        if Check.detect_empty_values(title):
-            raise EmptyValueError('Empty value detected.')
+        book_is_available = self.library[title]['is_available']
+
+        if Check.detect_empty_values([title]):
+            raise EmptyValueError()
         elif not Check.exists(book_title=title):
-            raise NameTaken('Book title already taken!')
-        elif self.library[title]['is_available'] == False:
+            raise NameTaken(f"Book title '{title}' already taken!")
+        elif book_is_available == False:
             print('Book cannot be borrowed for the time being.')
         else:
             print(f"Book requested '{title}' is available for borrow!")
@@ -47,7 +49,7 @@ class GeneralServices():
             str: 'Success!' if found, otherwise None """
     def search(self, what_to_search: str, name:str):
         if Check.detect_empty_values([what_to_search]):
-            raise EmptyValueError('Empty value detected.')
+            raise EmptyValueError()
         elif what_to_search.lower() not in ['user', 'book', 'author']:
             print('Search invalid. Can only search for user, book, and author.')
             return 
@@ -56,7 +58,7 @@ class GeneralServices():
         match what_to_search:
             case 'user':
                 if not Check.exists(username=name):
-                    print('User cannot be found!')
+                    print(f"User '{name}' cannot be found!")
                 else:
                     for field, info in self.accounts[name]:
                         print(f'{field}: {info}')
@@ -64,7 +66,7 @@ class GeneralServices():
 
             case 'book':
                 if not Check.exists(book_title=name):
-                    print('Book cannot be found!')
+                    print(f"Book '{name}' cannot be found!")
                 else:
                     for field, info in self.library[name]:
                         print(f'{field}: {info}')
@@ -72,7 +74,7 @@ class GeneralServices():
 
             case 'author':
                 if not Check.exists(author_name=name):
-                    print('Author cannot be found!')
+                    print(f"Author '{name}' cannot be found!")
                 else:
                     for field, info in self.authors[name]:
                         print(f'{field}: {info}')
@@ -84,9 +86,9 @@ class GeneralServices():
             str: 'Success!' if successful, otherwise None. """        
     def user_borrow_history(self, name: str):
         if Check.detect_empty_values([name]):
-            raise EmptyValueError('Empty values detected')
+            raise EmptyValueError()
         elif not Check.exists(username=name):
-            raise NotFound('User cannot be found!')
+            raise NotFound(f"User '{name}' cannot be found!")
         
         print(f'LIST OF BOOKS BORROWED BY {name}:')
         for number, book in enumerate(self.accounts['borrowed_books'], start=1).values():
@@ -99,9 +101,9 @@ class GeneralServices():
             str: 'Successful!' if successful, otherwise None. """
     def book_borrow_history(self, title: str):
         if Check.detect_empty_values([title]):
-            raise EmptyValueError('Empty values detected')
+            raise EmptyValueError()
         elif not Check.exists(book_title=title):
-            raise NotFound('Book cannot be found!')
+            raise NotFound(f"Book '{title}' cannot be found!")
 
         print('LIST OF BORROWERS:')
         for number, borrower in enumerate(self.borrow[title], start=1):
@@ -114,13 +116,13 @@ class GeneralServices():
     """ Gets all the books written by the specified author.
         RETURNS:
          list: All the books written by the author """
-    def get_written_books(self, author: str):
-        if Check.detect_empty_values(author):
-            raise EmptyValueError('Empty value detected!')
-        elif not Check.exists([author]):
-            raise NotFound('Author cannot be found!')
+    def get_written_books(self, name: str):
+        if Check.detect_empty_values(name):
+            raise EmptyValueError()
+        elif not Check.exists(author_name=name):
+            raise NotFound(f"Author '{name}' cannot be found!")
         else:
-            books_written = self.authors[author]['books']
+            books_written = self.authors[name]['books']
             for books in books_written:
                 for number, book in enumerate(books):
                     print(number, book)
@@ -152,11 +154,13 @@ class LibrarianServices(GeneralServices):
         super().__init__(file)
 
 
-    def create_user(self, name: str, email: str, age: int):
-        if Check.detect_empty_values([name, email, age, id]):
-            raise EmptyValueError('Emtpy values detected')
-        elif Check.exists(name):
-            raise NameTaken('Username already taken!')
+    def create_user(self, user_name: str, user_email: str, user_age: int):
+        if Check.detect_empty_values([user_name, user_email, user_age]):
+            raise EmptyValueError()
+        elif Check.exists(user_name):
+            raise NameTaken(f"Username '{user_name}' already taken!")
+        elif not Check.is_valid(email=user_email):
+            raise InvalidEmail(f"'{user_email}' is not a valid email. Use Gmail or Yahoo only.")
         else:
             User.total_number += 1
 
@@ -165,7 +169,7 @@ class LibrarianServices(GeneralServices):
             id = generate_unique_id(existing_ids)
             
             # creates and save the user to json
-            new_user = User(name, email, age, id)
+            new_user = User(user_name, user_email, user_age, id)
             self.accounts_data.create_data(new_user)
             self.accounts_data.save_changes()
 
@@ -174,13 +178,13 @@ class LibrarianServices(GeneralServices):
         changes =  [name, field, new_value]
 
         if Check.detect_empty_values(changes):        
-            raise EmptyValueError('Empty value detected!')
+            raise EmptyValueError()
         elif not Check.exists(username=name):
-            raise NotFound('User cannot be found!')
+            raise NotFound(f"User '{name}' cannot be found!")
         elif not Check.exists(field=field):
-            raise NotFound('Field cannot be found!')
+            raise NotFound(f"Field '{name}' cannot be found!")
         elif field == 'age' and Check.is_valid(age=new_value):
-            raise InvalidAge('Age entered is invalid. Either too old, too young, or not real.')
+            raise InvalidAge()
         elif field == 'role' and Check.is_valid(role=new_value):
             raise InvalidChange('Role invalid. Roles must only be librarian/member.')
         elif field == 'id':
@@ -197,9 +201,9 @@ class LibrarianServices(GeneralServices):
         User.total_number -= 1
 
         if Check.detect_empty_values([name]):
-            raise EmptyValueError('Empty value detected!')
+            raise EmptyValueError()
         elif not Check.exists(name):
-            raise NotFound('User cannot be found!')
+            raise NotFound(f"User '{name}' cannot be found!")
         else:
             # deletes the entry from json and save the changes
             self.accounts_data.delete_data(name)
@@ -208,15 +212,14 @@ class LibrarianServices(GeneralServices):
     
     def add_book(self, title:str, author: str, quantity=1, date_published='unknown', genre='unknown', age_restriction='all-ages', is_available=True):
         if Check.detect_empty_values([title, author, quantity, date_published, genre, age_restriction, is_available]):
-            raise EmptyValueError('Empty values detected!')
+            raise EmptyValueError()
         elif Check.exists([title]):
-            raise NameTaken('Book title already taken!')
+            raise NameTaken(f"Book title '{title}' already taken!")
         elif quantity < 0:
             raise ValueError('Book quantity cannot be lower than zero.')
         else:
             User.total_number+= 1
             Author.total_number += 1
-
             self.data.save_changes()
 
 
