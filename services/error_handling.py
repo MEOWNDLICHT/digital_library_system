@@ -1,4 +1,4 @@
-from data import AccountsData, AuthorsData, LibraryData, BorrowInfoData
+from data import AccountsData, AuthorsData, LibraryData, BorrowData
 import json
 
 
@@ -17,7 +17,6 @@ class Check:
 
 
     """Checks to see if there are any empty values detected in the input
-        
         RETURNS:
             bool: True if any empty input values are detected, otherwise False. """
     @staticmethod
@@ -27,15 +26,12 @@ class Check:
         return False
 
 
-    """ Checks for the existence of an item in the dataset.
-        
+    """ Checks for the existence of an item in the dataset.   
         NOTE: it is REQUIRED to specify the parameter name before entering the value u want to check 
         sample: (username = name_of_user). 
-        
         RETURNS:
             bool: True if item found (or exists), otherwise False. """
-    def exists(self, username=None, book_title=None, author_name=None, borrow_info=None, field=None):
-
+    def exists(self, username=None, book_title=None, author_name=None, borrow_info=None, field=None):   
         if username in self.accounts:
             return True
         if book_title in self.library:
@@ -60,7 +56,6 @@ class Check:
     
 
     """ Checks if a value that the user has given is valid
-     
         RETURN:
             bool: True if valid, False otherwise. """
     def is_valid(self, name=None, email=None, role=None, age=None):

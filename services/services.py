@@ -1,7 +1,7 @@
-from data import AccountsData, LibraryData, AuthorsData, BorrowInfoData
-from data import AccountsData, AuthorsData, LibraryData, BorrowInfoData
 from model import Book, User, Author
-from services import generate_unique_id, Check, NotFound, NameTaken, EmptyValueError, InvalidAge, InvalidChange
+from data import AccountsData, AuthorsData, LibraryData, BorrowData
+from services import generate_unique_id
+from error_handling import Check, NotFound, NameTaken, EmptyValueError, InvalidAge, InvalidChange
 import json
 
 
@@ -14,7 +14,7 @@ class GeneralServices():
         self.accounts_data = AccountsData()
         self.authors_data = AuthorsData()
         self.library_data = LibraryData()
-        self.borrow_data = BorrowInfoData()
+        self.borrow_data = BorrowData()
 
         with open(file, 'r') as f:
             self.data = json.load(f)
@@ -153,7 +153,7 @@ class LibrarianServices(GeneralServices):
 
 
     def create_user(self, name: str, email: str, age: int):
-        if Check.detect_empty_values():
+        if Check.detect_empty_values([name, email, age, id]):
             raise EmptyValueError('Emtpy values detected')
         elif Check.exists(name):
             raise NameTaken('Username already taken!')
@@ -196,7 +196,7 @@ class LibrarianServices(GeneralServices):
     def delete_user(self, name: str):
         User.total_number -= 1
 
-        if Check.detect_empty_values(name):
+        if Check.detect_empty_values([name]):
             raise EmptyValueError('Empty value detected!')
         elif not Check.exists(name):
             raise NotFound('User cannot be found!')
