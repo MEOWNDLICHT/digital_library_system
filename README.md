@@ -36,7 +36,7 @@ Some methods work, but spaghetti code is lurking. Needs cleanup.
 main.py -> services -> data -> model
 
 
-main.py - handles the proper execution of everything  
+main.py - this is where you should run the program
 services - where the CRUD operations are properly handled and authenticated  
 data - where data is stored and updated  
 model - where the basic blueprints for accounts, users, and such are handled  
