@@ -111,7 +111,7 @@ class AuthorsData(DataHandling):
 
 
 
-class BorrowInfoData(DataHandling):
+class BorrowData(DataHandling):
      def __init__(self):
           super().__init__()
 
