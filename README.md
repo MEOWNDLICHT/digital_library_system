@@ -36,11 +36,7 @@ Some methods work, but spaghetti code is lurking. Needs cleanup.
 main.py -> services -> data -> model
 
 
-<<<<<<< HEAD
 main.py - this is where you should run the program  
-=======
-main.py - this is where you should run the program
->>>>>>> d8eb4c83a74460f6d2c3b980bd4edacf161b427e
 services - where the CRUD operations are properly handled and authenticated  
 data - where data is stored and updated  
 model - where the basic blueprints for accounts, users, and such are handled  
