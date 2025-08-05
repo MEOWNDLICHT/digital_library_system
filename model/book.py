@@ -1,3 +1,5 @@
+""" Here is the blueprint for the book object """
+
 from model import Author
 
 class Book:

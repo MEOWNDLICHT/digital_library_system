@@ -1,4 +1,4 @@
-# Library Simulation Program  
+# Digital Library System
 
 A CLI-based simulation of digital library system that supports basic CRUD operations for managing books, users, authors, and borrowing information. Users are authenticated and given access to varying operations based on their role (librarian/member).  
 

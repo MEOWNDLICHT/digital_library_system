@@ -1,3 +1,5 @@
+""" Here is the blueprint for the author object """
+
 class Author:
     def __init__(self, name: str, age='Unknown', birthday='Unknown', nationality='Unknown', books=[]):
         self.name = name

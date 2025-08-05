@@ -1,14 +1,10 @@
-""" This should be the only place where you should run the code, otherside it may behave unexpectedly. """
+""" The CENTRAL POINT of the program. This is where you should only RUN the program for it to behave properly. """
 
-from data import AccountsData, LibraryData, AuthorsData, BorrowData
-from services import GeneralServices, LibrarianServices, MemberServices
-
-
+from data import GeneralDataHandling, Create, Update, Delete
+from model import User, Author
 
 def run_packages():
-    library = LibrarianServices()
-    library.create_user('SampleUser1', 'sampleuser1@gmail.com', 25)
-
+    pass
     
 
 
