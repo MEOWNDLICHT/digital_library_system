@@ -33,7 +33,7 @@ Some methods work, but spaghetti code is lurking. Needs cleanup.
 ---
 
 ## Project Structure / Flow  
-main.py -> services -> data -> model
+#### main.py -> services -> data -> model  
 
 
 main.py - this is where you should run the program  
