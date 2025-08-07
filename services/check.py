@@ -3,25 +3,36 @@
 
 
 class Check():
-    def __init__(self):
-        ...
-        
+    def __init__(self, data, file):
+        self.file = file
 
-    """Checks to see if there are any empty values detected in the input.
-        RETURNS:
-            bool: True if any empty input values are detected, otherwise False. """
+        if data is not None:
+            self.data = data
+
+        # Shorthands to ease each dataset calls
+        self.accounts = self.data['accounts']
+        self.library = self.data['library']
+        self.authors = self.data['authors']
+        self.borrow = self.data['borrows']
+
+
     @staticmethod
     def detect_empty_values(*args: str):
-        if any(str(value).strip() for value in args):
+        """ Checks to see if there are any empty values detected in the input.
+            
+            Returns:
+                bool: True if any empty input values are detected, otherwise False. """
+        if not any(str(value).strip() for value in args):
             return True
         return False
 
 
-    """ Checks if a value that the user has given is valid
-        RETURN:
-            bool: True if valid, False otherwise. """
     @staticmethod
-    def is_valid(name='unknown', email='sample@gmail.com', role='member', age=18):
+    def is_valid(name='unknown', email='sample@gmail.com', role='member', age=18, quantity=1, is_available=True):
+        """ Checks if a value that the user has given is valid
+            
+            Returns:
+                bool: True if valid, False otherwise. """
         # checks if the arg is accurate to the data type needed
         if not isinstance(name, str):
             return False
@@ -30,6 +41,10 @@ class Check():
         if not isinstance(email, str):
             return False
         if not isinstance(role, str):
+            return False
+        if not isinstance(quantity, int):
+            return False
+        if not isinstance(is_available, bool):
             return False
         
         # age validation
@@ -45,11 +60,38 @@ class Check():
         # role validation
         if role.lower() not in ['librarian', 'member']:
             return False
+        
+        
+
         return True
+    
+    
 
+    # NOTE: Don't forget to specify the parameter name before entering the value u want to check (username = name_of_user).
+    def exists(self, username=None, book_title=None, author_name=None, borrow_info=None, field=None):
+        """ Checks for the existence of an item in the dataset.  
+            
+            Returns:
+                bool: True if item found (or it exists), otherwise False. """
+        if username in self.accounts:
+            return True
+        if book_title in self.library:
+            return True
+        if author_name in self.authors:
+            return True
+        if borrow_info in self.borrow:
+            return True
+        
+        # This only works for the first three datasets: accounts, library, and authors
+        for dataset in self.data.values():
+            for names in dataset.values():
+                if field in names.keys():
+                    return True
 
-    """ Checks for the existence of an item in the dataset.   
-    RETURNS:
-        bool: True if item found (or it exists), otherwise False. """
-    def exists(self):
-        ...
+        # borrow dataset has a very specific structure
+        for title in self.borrow:
+            for borrowers in self.borrow[title]:
+                if field in self.borrow[title][borrowers].keys():
+                    return True
+        return False
+    
