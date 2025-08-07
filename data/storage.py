@@ -1,38 +1,21 @@
 """ This is where data is handled for different CRUD operations. All info are stored in json file. """
 
 from model import User, Book, Author, Borrow
-from abc import ABC
 import os
 import json
 
 
 
-class GeneralDataHandling(ABC):
-    DEFAULT_DATASETS = {
-        'accounts': {},
-        'authors': {},
-        'library': {},
-        'borrows': {}
-    }
+class GeneralDataHandling():
+    def __init__(self, data, file):
+        self.file = file
 
-    def __init__(self, file='data/storage.json'):
-        # Checks if the json file exists and sets the default data structures
-        if not os.path.exists(file):
-            with open(file, 'w') as create_file:
-                json.dump(self.DEFAULT_DATASETS, create_file, indent=4)
-        
-        try:
-            with open(file, 'r') as f:
-                self.data = json.load(f)
-          
-        # To ensure that the program wouldn't break regardless of whether storage.json is empty or cannot be found.
-        except (json.JSONDecodeError, FileNotFoundError):
-            self.data = self.DEFAULT_DATASETS.copy()
-            self.save_changes()
+        if data is not None:
+            self.data = data
 
 
-    def save_changes(self, file='data/storage.json'):
-        with open(file, 'w') as save:
+    def save_changes(self):
+        with open(self.file, 'w') as save:
             json.dump(self.data, save, indent=4)
         
 
@@ -40,8 +23,8 @@ class GeneralDataHandling(ABC):
 
 
 class Create(GeneralDataHandling):
-    def __init__(self, file='data/storage.json'):
-        super().__init__(file)
+    def __init__(self, data, file):
+        super().__init__(data, file)
 
     def save_user(self, user: User):
         self.data['accounts'][user.username] = {'email': user.email,
@@ -70,7 +53,7 @@ class Create(GeneralDataHandling):
         self.save_changes()
 
     def save_borrow(self, borrow: Borrow):
-        self.data['borrow_data'][borrow.book_title][borrow.borrowed_by] = {'user_status': borrow.user_status,
+        self.data['borrows'][borrow.book_title][borrow.borrowed_by] = {'user_status': borrow.user_status,
                                                                             'borrowed_on': borrow.borrowed_on,
                                                                             'borrow_deadline': borrow.borrow_deadline,
                                                                             'returned_on': borrow.returned_on}
@@ -81,12 +64,12 @@ class Create(GeneralDataHandling):
 
 
 class Update(GeneralDataHandling):
-    def __init__(self, file='data/storage.json'):
-        super().__init__(file)
+    def __init__(self, data, file):
+        super().__init__(data, file)
 
     # This only works for accounts, authors, and books. Borrow has a specific dataset structure.
-    def update_entry(self, valid_dataset: list[str]):
-        dataset, name, field, new_value = valid_dataset
+    def update_entry(self, change: list[str]):
+        dataset, name, field, new_value = change
         accepted_datasets = ['accounts', 'authors', 'library']
 
         # I dont think this is necessary, but just in case...
@@ -108,11 +91,12 @@ class Update(GeneralDataHandling):
 
 
 class Delete(GeneralDataHandling):
-    def __init__(self, file='data/storage.json'):
-        super().__init__(file)
+    def __init__(self, data, file):
+        super().__init__(data, file)
 
     # Again, this follows the same logic as with update, wherein this only works for accounts, authors, and library.
-    def delete_entry(self, dataset: str, name: str):
+    def delete_entry(self, entry: list[str]):
+        dataset, name = entry
         accepted_datasets = ['accounts', 'authors', 'library']
 
         for valid_dataset in accepted_datasets:
