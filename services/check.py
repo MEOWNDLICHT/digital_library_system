@@ -13,7 +13,8 @@ class Check():
         self.accounts = self.data['accounts']
         self.library = self.data['library']
         self.authors = self.data['authors']
-        self.borrow = self.data['borrows']
+        self.borrow_booklist = self.data['borrows'].keys()
+        self.borrow_userlist = [user for users in self.data['borrows'].values() for user in users]
 
 
     @staticmethod
@@ -60,15 +61,12 @@ class Check():
         # role validation
         if role.lower() not in ['librarian', 'member']:
             return False
-        
-        
-
         return True
     
     
 
     # NOTE: Don't forget to specify the parameter name before entering the value u want to check (username = name_of_user).
-    def exists(self, username=None, book_title=None, author_name=None, borrow_info=None, field=None):
+    def exists(self, username=None, book_title=None, author_name=None, borrow_bookname=None, borrow_username=None, field=None):
         """ Checks for the existence of an item in the dataset.  
             
             Returns:
@@ -79,7 +77,9 @@ class Check():
             return True
         if author_name in self.authors:
             return True
-        if borrow_info in self.borrow:
+        if borrow_bookname in self.borrow_booklist:
+            return True
+        if borrow_username in self.borrow_userlist:
             return True
         
         # This only works for the first three datasets: accounts, library, and authors

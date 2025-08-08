@@ -3,8 +3,9 @@
 from model import User, Author, Book, Borrow
 from data import Create, Update, Delete
 from .check import Check
-from .error import EmptyValueError, NameTakenError, NameNotFoundError, InvalidAgeError, InvalidEmailError, InvalidChangeError, InvalidQuantityError
+from .error import EmptyValueError, NameTakenError, NameNotFoundError, InvalidAgeError, InvalidEmailError, InvalidChangeError, InvalidQuantityError, BookUnavailableError
 from .generate_id import generate_unique_id
+from datetime import datetime, timedelta
 import json
 import os
 
@@ -64,7 +65,7 @@ class GeneralServices():
         elif not self.check.exists(book_title=title):
             raise NameTakenError(title)
         elif book_is_available == False:
-            print('Book unavailable for borrow.')
+            raise BookUnavailableError(title)
         else:
             print(f"Book requested '{title}' is available for borrow!")
             return True
@@ -321,19 +322,64 @@ class LibrarianServices(GeneralServices):
 
 
     """ BORROW-RELATED OPERATIONS """
-    def update_borrow(self):
-        ...
+    def update_borrow(self, title: str, borrower: str, field_name: str, new_value: str):
+        changes = [title, borrower, field_name, new_value]
 
-
-
+        if self.check.detect_empty_values(title, borrower, field_name, new_value):
+            raise EmptyValueError()
+        elif not self.check.exists(book_title=title):
+            raise NameNotFoundError('book', title)
+        elif not self.check.exists(username=borrower):
+            raise NameNotFoundError('user', borrower)
+        elif not self.check.exists(field=field_name):
+            raise NameNotFoundError('field', field_name)
+        else:
+            self.update.update_borrow(changes)
+        
 
 
 
 class MemberServices(GeneralServices):
     """ BORROW-RELATED OPERATIONS FOR MEMBERS """
-    def borrow_book(self):
-        pass
+    def borrow_book(self, title: str, borrower: str):
+        # generates the date today
+        borrowed_on = datetime.now()
 
+        # sets a two-week deadline for borrowed_on
+        borrow_deadline = borrowed_on + timedelta(days=14)
+
+        if self.check.detect_empty_values(title, borrower):
+            raise EmptyValueError()
+        elif not self.check.exists(book_title=title):
+            raise NameNotFoundError(title)
+        elif not self.check.exists(username=borrower):
+            raise NameNotFoundError(borrower)
+        elif not self.library[title]['is_available']:
+            raise BookUnavailableError(title)
+        else:
+            # # this makes the dates readable (format: weekday_name, month_name day, year)
+            # returned_on = returned_on.strftime("%A, %B %d, %Y")
+            # borrow_deadline = borrow_deadline.strftime("%A, %B %d, %Y")
+
+            # creates the borrow object and saves it to the database.
+            new_borrow = Borrow(title, borrower, borrowed_on, borrow_deadline)
+            self.create.save_borrow(new_borrow)
     
-    def return_book(self):
-        pass
+
+    def return_book(self, title: str, borrower: str):
+        if self.check.detect_empty_values(title, borrower):
+            raise EmptyValueError()
+        elif not self.check.exists(book_title=title):
+            raise NameNotFoundError(title)
+        elif not self.check.exists(username=borrower):
+            raise NameNotFoundError(borrower)
+        
+        # checks if the book title and borrower exists in the borrow database.
+        elif not self.check.exists(borrow_bookname=title):
+            raise NameNotFoundError(title)
+        elif not self.check.exists(borrow_username=borrower):
+            raise NameNotFoundError(borrower)
+        else:
+            returned_date = datetime.now()
+            return_info = [title, borrower, 'returned_on', returned_date]
+            self.update.update_borrow(return_info)
