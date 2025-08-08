@@ -303,17 +303,26 @@ class LibrarianServices(GeneralServices):
 
 
     """ AUTHOR-RELATED OPERATIONS """
-    def update_author(self):
-        pass
+    def update_author(self, name: str, field_name: str, new_value: str):
+        changes = ['authors', name, field_name, new_value]
+
+        if self.check.detect_empty_values(name, field_name, new_value):
+            raise EmptyValueError()
+        elif not self.check.exists(name):
+            raise NameNotFoundError('author', name)
+        elif not self.check.exists(field=field_name):
+            raise NameNotFoundError('field', field_name)
+        elif field_name  == 'books':
+            raise InvalidChangeError('books list', field_name)
+        elif field_name == 'age' and not self.check.is_valid(new_value):
+            raise InvalidAgeError()
+        else:
+            self.update.update_entry(changes)
 
 
     """ BORROW-RELATED OPERATIONS """
-    def create_borrow(self):
-        pass
-
-
     def update_borrow(self):
-        pass
+        ...
 
 
 
