@@ -1,7 +1,6 @@
 """ This is where data is handled for different CRUD operations. All info are stored in json file. """
 
 from model import User, Book, Author, Borrow
-import os
 import json
 
 
@@ -52,11 +51,11 @@ class Create(GeneralDataHandling):
                                             'is_available': book.is_available}
         self.save_changes()
 
-    def save_borrow(self, borrow: Borrow):
-        self.data['borrows'][borrow.book_title][borrow.borrowed_by] = {'user_status': borrow.user_status,
-                                                                            'borrowed_on': borrow.borrowed_on,
-                                                                            'borrow_deadline': borrow.borrow_deadline,
-                                                                            'returned_on': borrow.returned_on}
+    def save_borrow(self, borrow_info: Borrow):
+        self.data['borrows'][borrow_info.book_title][borrow_info.borrowed_by] = {'borrowed_on': borrow_info.borrowed_on,
+                                                                                'borrow_deadline': borrow_info.borrow_deadline,
+                                                                                'returned_on': borrow_info.returned_on,
+                                                                                'user_status': borrow_info.user_status}
         self.save_changes()
 
 
