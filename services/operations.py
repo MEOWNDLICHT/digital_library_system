@@ -32,7 +32,6 @@ class GeneralServices():
         # To ensure that the program wouldn't break regardless of whether storage.json is empty or cannot be found.
         except (json.JSONDecodeError, FileNotFoundError):
             self.data = self.DEFAULT_DATASETS.copy()
-            self.save_changes()   
 
         # Ensures that each data methods have only one instance and all are synched (or uses the same 'data')
         self.create = Create(self.data, self.file)
@@ -250,9 +249,9 @@ class LibrarianServices(GeneralServices):
         elif self.check.exists(title):
             raise NameTakenError('book', title)
         elif quantity < 0:
-            raise ValueError('Book quantity cannot be lower than zero.')
-        elif self.check.is_valid(quantity=quantity):
-            raise ValueError('Book quantity must only be expressed in natural numbers.')
+            raise InvalidQuantityError('quantity_less_than_zero')
+        elif not self.check.is_valid(quantity=quantity):
+            raise InvalidQuantityError('quantity_not_int')
         else:       
             new_book = Book(title, author, quantity, date_published, genre, age_restriction, is_available)
 
@@ -260,10 +259,10 @@ class LibrarianServices(GeneralServices):
             if author not in self.authors:
                 new_author = Author(author, books=[title])
                 self.create.save_author(new_author)
-            else:
-                written_books = self.data['authors'][author]['books']
-
-                # updates the author's written books list if they already exist.
+        
+            # updates the author's written books list.
+            written_books = self.data['authors'][author]['books']
+            if title not in written_books:
                 written_books.append(title)
                 self.update.update_entry(['authors', author, 'books', written_books])
 
