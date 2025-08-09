@@ -19,7 +19,7 @@ A CLI-based simulation of digital library system that supports basic CRUD operat
 - Can create, delete, update user accounts and information  
 - Can add, remove, update book informations  
 - Can update author-related informations  
-- Can create and edit borrow-related information  
+- Can update borrow-related information  
 
 ---
 
