@@ -2,7 +2,7 @@
 
 from model import User, Author, Book, Borrow
 from data import Create, Update, Delete
-from .check import Check
+from .validation import Check
 from .error import EmptyValueError, NameTakenError, NameNotFoundError, InvalidAgeError, InvalidEmailError, InvalidChangeError, InvalidQuantityError, BookUnavailableError
 from .generate_id import generate_unique_id
 from datetime import datetime, timedelta
@@ -67,9 +67,8 @@ class GeneralServices():
         elif book_is_available == False:
             raise BookUnavailableError(title)
         else:
-            print(f"Book requested '{title}' is available for borrow!")
+            print(f"Book requested, '{title}', is available for borrow!")
             return True
-        return False
 
 
     def search(self, what_to_search: str, name:str):
@@ -83,30 +82,30 @@ class GeneralServices():
             print('Search invalid. Can only search for user, book, and author.')
             return 
         
-        print(f'YOU SEARCHED FOR: {name}')
+        print(f'\nYOU SEARCHED FOR: {name}\n')
         match what_to_search:
             case 'user':
                 if not self.check.exists(username=name):
-                    raise NameNotFoundError('user', name)
+                    raise NameNotFoundError(username=name)
                 else:
-                    for field, info in self.accounts[name]:
-                        print(f'{field}: {info}')
+                    for field, info in self.accounts[name].items():
+                        print(f'{field.capitalize().replace('_', ' ')}: {info}')
                     return 'Success!'
 
             case 'book':
                 if not self.check.exists(book_title=name):
-                    raise NameNotFoundError('book', name)
+                    raise NameNotFoundError(book_title=name)
                 else:
-                    for field, info in self.library[name]:
-                        print(f'{field}: {info}')
+                    for field, info in self.library[name].items():
+                        print(f'{field.capitalize().replace('_', ' ')}: {info}')
                     return 'Success!'
 
             case 'author':
                 if not self.check.exists(author_name=name):
-                    raise NameNotFoundError('author', name)
+                    raise NameNotFoundError(author=name)
                 else:
-                    for field, info in self.authors[name]:
-                        print(f'{field}: {info}')
+                    for field, info in self.authors[name].items():
+                        print(f'{field.capitalize().replace('_', ' ')}: {info}')
                     return 'Success!'
 
 
@@ -118,7 +117,7 @@ class GeneralServices():
         if self.check.detect_empty_values(name):
             raise EmptyValueError()
         elif not self.check.exists(username=name):
-            raise NameNotFoundError('user', name)
+            raise NameNotFoundError(username=name)
         
         print(f'LIST OF BOOKS BORROWED BY {name}:')
         for number, book in enumerate(self.accounts['borrowed_books'], start=1).values():
@@ -134,7 +133,9 @@ class GeneralServices():
         if self.check.detect_empty_values(title):
             raise EmptyValueError()
         elif not self.check.exists(book_title=title):
-            raise NameNotFoundError('book', title)
+            raise NameNotFoundError(book_title=title)
+        elif not self.check.exists(borrow_bookname=title):
+            raise NameNotFoundError(borrowed_book=title)
 
         print('LIST OF BORROWERS:')
         for number, borrower in enumerate(self.borrow[title], start=1):
@@ -152,7 +153,7 @@ class GeneralServices():
         if self.check.detect_empty_values(name):
             raise EmptyValueError()
         elif not self.check.exists(author_name=name):
-            raise NameNotFoundError('author', name)
+            raise NameNotFoundError(author=name)
         else:
             books_written = self.authors[name]['books']
             for books in books_written:
@@ -210,23 +211,21 @@ class LibrarianServices(GeneralServices):
             self.create.save_user(new_user)
 
 
-    def update_user(self, name, field, new_value):
-        changes =  ['accounts', name, field, new_value]
+    def update_user(self, name, field_name, new_value):
+        changes =  ['accounts', name, field_name, new_value]
 
         if self.check.detect_empty_values(changes):        
             raise EmptyValueError()
         elif not self.check.exists(username=name):
-            raise NameNotFoundError('user', name)
-        elif not self.check.exists(field=field):
-            raise NameNotFoundError('field', field)
-        elif field == 'age' and not self.check.is_valid(age=new_value):
+            raise NameNotFoundError(username=name)
+        elif not self.check.field_exists(field=field_name):
+            raise NameNotFoundError(field=field_name)
+        elif field_name == 'age' and not self.check.is_valid(age=new_value):
             raise InvalidAgeError()
-        elif field == 'role' and not self.check.is_valid(role=new_value):
+        elif field_name == 'role' and not self.check.is_valid(role=new_value):
             raise InvalidChangeError('role')
-        elif field == 'id':
-            raise InvalidChangeError('field', field)
-        elif field == 'remaining_borrow':
-            raise InvalidChangeError('field', field)
+        elif field_name in ['id', 'remaining_borrow']:
+            raise InvalidChangeError('field', field_name)
         else:
             # update and save changes to json
             self.update.update_entry(changes)
@@ -238,7 +237,7 @@ class LibrarianServices(GeneralServices):
         if self.check.detect_empty_values(name):        
             raise EmptyValueError()
         elif not self.check.exists(username=name):
-            raise NameNotFoundError(name)
+            raise NameNotFoundError(username=name)
         else:
             self.delete.delete_entry(user_entry)
 
@@ -277,9 +276,9 @@ class LibrarianServices(GeneralServices):
         if self.check.detect_empty_values(title, field_name, new_value):
             raise EmptyValueError()
         elif not self.check.exists(book_title=title):
-            raise NameNotFoundError('book', title)
-        elif not self.check.exists(field=field_name):
-            raise NameNotFoundError('field', field_name)
+            raise NameNotFoundError(book_title=title)
+        elif not self.check.field_exists(field=field_name):
+            raise NameNotFoundError(field=field_name)
         elif field_name == 'quantity' and new_value < 0:
             raise InvalidQuantityError('quantity_less_then_zero')
         elif field_name == 'quantity' and not self.check.is_valid(quantity=new_value):
@@ -298,7 +297,7 @@ class LibrarianServices(GeneralServices):
         if self.check.detect_empty_values(title):
             raise EmptyValueError()
         elif not self.check.exists(book_title=title):
-            raise NameNotFoundError('book', title)
+            raise NameNotFoundError(book_title=title)
         else:
             self.delete.delete_entry(book_entry)
 
@@ -310,9 +309,9 @@ class LibrarianServices(GeneralServices):
         if self.check.detect_empty_values(name, field_name, new_value):
             raise EmptyValueError()
         elif not self.check.exists(name):
-            raise NameNotFoundError('author', name)
+            raise NameNotFoundError(author=name)
         elif not self.check.exists(field=field_name):
-            raise NameNotFoundError('field', field_name)
+            raise NameNotFoundError(field=field_name)
         elif field_name  == 'books':
             raise InvalidChangeError('books list', field_name)
         elif field_name == 'age' and not self.check.is_valid(new_value):
@@ -328,11 +327,20 @@ class LibrarianServices(GeneralServices):
         if self.check.detect_empty_values(title, borrower, field_name, new_value):
             raise EmptyValueError()
         elif not self.check.exists(book_title=title):
-            raise NameNotFoundError('book', title)
+            raise NameNotFoundError(book_title=title)
         elif not self.check.exists(username=borrower):
-            raise NameNotFoundError('user', borrower)
-        elif not self.check.exists(field=field_name):
-            raise NameNotFoundError('field', field_name)
+            raise NameNotFoundError(username=borrower)
+        
+        # checks if the book title and borrower exists in the borrow database.
+        elif not self.check.exists(borrow_bookname=title):
+            raise NameNotFoundError(borrowed_book=title)
+        elif not self.check.exists(borrow_username=borrower):
+            raise NameNotFoundError(borrower=borrower)
+
+        elif not self.check.field_exists(field=field_name):
+            raise NameNotFoundError(field=field_name)
+        elif field_name == 'borrow_deadline' or field_name == 'borrowed_on':
+            raise InvalidChangeError('field', field_name)
         else:
             self.update.update_borrow(changes)
         
@@ -351,9 +359,9 @@ class MemberServices(GeneralServices):
         if self.check.detect_empty_values(title, borrower):
             raise EmptyValueError()
         elif not self.check.exists(book_title=title):
-            raise NameNotFoundError(title)
+            raise NameNotFoundError(book_title=title)
         elif not self.check.exists(username=borrower):
-            raise NameNotFoundError(borrower)
+            raise NameNotFoundError(username=borrower)
         elif not self.library[title]['is_available']:
             raise BookUnavailableError(title)
         else:
@@ -370,15 +378,15 @@ class MemberServices(GeneralServices):
         if self.check.detect_empty_values(title, borrower):
             raise EmptyValueError()
         elif not self.check.exists(book_title=title):
-            raise NameNotFoundError(title)
+            raise NameNotFoundError(book_title=title)
         elif not self.check.exists(username=borrower):
-            raise NameNotFoundError(borrower)
+            raise NameNotFoundError(username=borrower)
         
         # checks if the book title and borrower exists in the borrow database.
         elif not self.check.exists(borrow_bookname=title):
-            raise NameNotFoundError(title)
+            raise NameNotFoundError(borrowed_book=title)
         elif not self.check.exists(borrow_username=borrower):
-            raise NameNotFoundError(borrower)
+            raise NameNotFoundError(borrower=borrower)
         else:
             returned_date = datetime.now()
             return_info = [title, borrower, 'returned_on', returned_date]

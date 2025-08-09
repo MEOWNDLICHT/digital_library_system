@@ -19,8 +19,22 @@ class NameTakenError(Error):
 
 class NameNotFoundError(Error):
     """ Raised when name of type user, author, or book cannot be found in the database. """
-    def __init__(self, entity_type: str, name: str):
-        super().__init__(f"{entity_type.capitalize()}, '{name}', cannot be found!")
+    def __init__(self, username=None, author=None, book_title=None, borrowed_book=None, borrower=None, field=None):
+        if username:
+            message = f"User, '{username}', cannot be found in the database for 'accounts'!"
+        elif author:
+            message = f"Author, '{author}', cannot be found in the database for 'authors'!"
+        elif book_title:
+            message = f"Book, '{book_title}', cannot be found in the database for 'library'!"
+        elif borrowed_book:
+            message = f"Borrowed book, '{borrowed_book}', cannot be found in the database for 'borrows'!"
+        elif borrower:
+            message = f"Borrower, '{borrower}', cannot be found in the database for 'borrows'!"
+        elif field:
+            message = f'Field, {field}, cannot be found!'
+        else:
+            message = 'Name cannot be found!'
+        super().__init__(message)
 
 
 class InvalidAgeError(Error):
@@ -40,12 +54,6 @@ class InvalidChangeError(Error):
     def __init__(self, entity_type: str, name=None, value=None):
         if entity_type == 'field' and name == 'age_restriction':
             message = f"Field, {name}, cannot be change to '{value}'. Must only be 'all-ages'/'mature'."
-        
-        
-        elif entity_type == 'field' and name == 'returned_on':
-            message = f''
-
-
         elif entity_type == 'field':
             message = f'Field, {name}, cannot be change for security reasons and convenience.'
         elif entity_type == 'role':
