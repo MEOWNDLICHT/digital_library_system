@@ -72,17 +72,17 @@ class Check():
             
             Returns:
                 bool: True if item found (or it exists), otherwise False. """
-        if username not in self.accounts:
-            return False
-        if book_title not in self.library:
-            return False
-        if author_name not in self.authors:
-            return False
-        if borrow_bookname not in self.borrow_booklist:
-            return False
-        if borrow_username not in self.borrow_userlist:
-            return False
-        return True
+        if username in self.accounts:
+            return True
+        if book_title in self.library:
+            return True
+        if author_name in self.authors:
+            return True
+        if borrow_bookname in self.borrow_booklist:
+            return True
+        if borrow_username in self.borrow_userlist:
+            return True
+        return False
         
 
     def field_exists(self, field: str):

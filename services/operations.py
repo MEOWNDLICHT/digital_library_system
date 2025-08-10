@@ -192,13 +192,15 @@ class LibrarianServices(GeneralServices):
     def create_user(self, user_name: str, user_email: str, user_age: int):
         if self.check.detect_empty_values(user_name, user_email, user_age):
             raise EmptyValueError()
-        elif self.check.exists(user_name):
-            raise NameTakenError('user', user_name)
+        elif self.check.exists(username=user_name):
+            raise NameTakenError(user_name)
         elif not self.check.is_valid(email=user_email):
             raise InvalidEmailError()
+        elif not self.check.is_valid(age=user_age):
+            raise InvalidAgeError()
         else:
             # generates a random unique id for the user
-            existing_ids = {user['id'] for user in self.accounts.values()}
+            existing_ids = [user['id'] for user in self.accounts.values()]
             id = generate_unique_id(existing_ids)
             
             # creates user object
@@ -365,9 +367,9 @@ class MemberServices(GeneralServices):
         elif not self.library[title]['is_available']:
             raise BookUnavailableError(title)
         else:
-            # # this makes the dates readable (format: weekday_name, month_name day, year)
-            # returned_on = returned_on.strftime("%A, %B %d, %Y")
-            # borrow_deadline = borrow_deadline.strftime("%A, %B %d, %Y")
+            # this makes the dates readable (format: weekday_name, month_name day, year)
+            returned_on = returned_on.strftime("%A, %B %d, %Y")
+            borrow_deadline = borrow_deadline.strftime("%A, %B %d, %Y")
 
             # creates the borrow object and saves it to the database.
             new_borrow = Borrow(title, borrower, borrowed_on, borrow_deadline)
