@@ -392,4 +392,9 @@ class MemberServices(GeneralServices):
         else:
             returned_date = datetime.now()
             return_info = [title, borrower, 'returned_on', returned_date]
+
+            # idk what to do with late returns for borrows.
+            if self.check._is_borrow_overdue(title, borrower, returned_date):
+                print('Book returned late.')
+
             self.update.update_borrow(return_info)

@@ -1,5 +1,6 @@
 """ Where validation and checks are handled. """
 
+from datetime import datetime, timedelta
 
 
 class Check():
@@ -101,4 +102,17 @@ class Check():
             for borrow_info in user_and_borrow_info.values():
                 if field in borrow_info.keys():
                     return True
+        return False
+
+
+    def _is_borrow_overdue(self, book_title: str, borrower: str, returned_on: datetime):
+        """ Checks if the borrow is overdue.
+            
+            Returns:
+                bool: True if borrow deadline is long overdue, False otherwise. """
+        # extracts the borrow_deadline from the user's borrow info and convert it back to datetime object.
+        borrow_deadline = datetime.strptime(self.borrows[book_title][borrower]['borrow_deadline'], "%A, %B %d, %Y")
+        
+        if returned_on > borrow_deadline:
+            return True
         return False
