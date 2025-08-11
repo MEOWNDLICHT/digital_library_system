@@ -1,6 +1,6 @@
 """ Where validation and checks are handled. """
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class Check():
