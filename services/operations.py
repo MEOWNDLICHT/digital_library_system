@@ -7,32 +7,15 @@ from .error import EmptyValueError, NameTakenError, NameNotFoundError, InvalidAg
 from .generate_id import generate_unique_id
 from datetime import datetime, timedelta
 import json
-import os
 
 
 
 class GeneralServices():
-    DEFAULT_DATASETS = {'accounts': {}, 
-                        'authors': {},
-                        'library': {},
-                        'borrows': {}}
-
-
     def __init__(self, file='data/storage.json'):
         self.file = file
 
-        # checks if the json file exists and sets the default data structures
-        if not os.path.exists(file):
-            with open(file, 'w') as create_file:
-                json.dump(self.DEFAULT_DATASETS, create_file, indent=4)
-
-        try:
-            with open(file, 'r') as f:
-                self.data = json.load(f)
-
-        # To ensure that the program wouldn't break regardless of whether storage.json is empty or cannot be found.
-        except (json.JSONDecodeError, FileNotFoundError):
-            self.data = self.DEFAULT_DATASETS.copy()
+        with open(file, 'r') as f:
+            self.data = json.load(f)
 
         # Ensures that each data methods have only one instance and all are synched (or uses the same 'data')
         self.create = Create(self.data, self.file)
@@ -120,7 +103,8 @@ class GeneralServices():
             raise NameNotFoundError(username=name)
         
         print(f'LIST OF BOOKS BORROWED BY {name}:')
-        for number, book in enumerate(self.accounts['borrowed_books'], start=1).values():
+        borrowed_books = self.accounts[name].get('borrowed_books', [])
+        for number, book in enumerate(borrowed_books, start=1):
             print(f'{number}. {book}')
         return 'Successful!'
 
@@ -139,8 +123,8 @@ class GeneralServices():
 
         print('LIST OF BORROWERS:')
         for number, borrower in enumerate(self.borrow[title], start=1):
-            for field, value in self.borrow[title][borrower]:
-                print(f'{number}. {borrower}')
+            print(f'{number}. {borrower}')
+            for field, value in self.borrow[title][borrower].items():
                 print(f'{field}: {value}\n')
             return 'Successful!'
 
@@ -180,6 +164,7 @@ class GeneralServices():
                 int: The total number of books in the library. """
         print(f'The total number of books in the library are: {Book.total_number}')
         return Book.total_number
+    
 
 
 
@@ -248,7 +233,7 @@ class LibrarianServices(GeneralServices):
     def add_book(self, title:str, author: str, quantity=1, date_published='unknown', genre='unknown', age_restriction='all-ages', is_available=True):
         if self.check.detect_empty_values(title, author, quantity, date_published, genre, age_restriction, is_available):
             raise EmptyValueError()
-        elif self.check.exists(title):
+        elif self.check.exists(book_title=title):
             raise NameTakenError('book', title)
         elif quantity < 0:
             raise InvalidQuantityError('quantity_less_than_zero')
@@ -368,7 +353,7 @@ class MemberServices(GeneralServices):
             raise BookUnavailableError(title)
         else:
             # this makes the dates readable (format: weekday_name, month_name day, year)
-            returned_on = returned_on.strftime("%A, %B %d, %Y")
+            borrowed_on = borrowed_on.strftime("%A, %B %d, %Y")
             borrow_deadline = borrow_deadline.strftime("%A, %B %d, %Y")
 
             # creates the borrow object and saves it to the database.
