@@ -174,7 +174,7 @@ class LibrarianServices(GeneralServices):
         super().__init__(file)
 
     """ USER-RELATED OPERATIONS """
-    def create_user(self, user_name: str, user_email: str, user_age: int):
+    def add_user(self, user_name: str, user_email: str, user_age: int):
         if self.check.detect_empty_values(user_name, user_email, user_age):
             raise EmptyValueError()
         elif self.check.exists(username=user_name):
