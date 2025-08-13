@@ -6,6 +6,9 @@ import sys, time
 
 
 class UserInteraction:
+    # for aethetic purposes
+    linebreak = "\n-----------------------------------------------------------------------------\n"
+
     def __init__(self):
         self.greet()
         self.how_to_use()   
@@ -19,8 +22,10 @@ class UserInteraction:
         else:
             service = GeneralServices()
 
+
         while True:
-            activity = str(input("\nWhat do you want to do? -> ")).strip()  
+            print(self.linebreak)
+            activity = str(input("What do you want to do? -> ")).strip()  
             try:
                 match activity:
                     # GENERAL ACCESS COMMAND
@@ -98,14 +103,14 @@ class UserInteraction:
     def user_status(self):
         """ Ask the user whether they are new to the program or not. Directs them to sign_up or login. """
         while True:
-            status = str(input("\nAre you new?(y/n) -> ")).strip()
+            print(self.linebreak)
+            status = str(input("Are you new?(y/n) -> ")).strip()
 
             # does nothing if 'n'.
             if status.lower() == 'n':
                 pass 
             elif status.lower() == 'y':
                 sign_up()
-                break
             else:
                 # skip the iteration and start over again.
                 print(f"\nInvalid answer: {status}. Can't determine user's status.\n")
@@ -173,7 +178,7 @@ class UserInteraction:
                          "SYSTEM COMMANDS": system_commands}
         
         # displays the commands list
-        print('\nHere are the list of commands that may help you navigate this program.\n')
+        print('\n\nHere are the list of commands that may help you navigate this program.\n')
         for label, commands in commands_list.items():
             print(label)
             for command, description in commands.items():
