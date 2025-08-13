@@ -1,9 +1,7 @@
 """ This is where the CLI-based interactions are supposed to be handled. """
 
-from services import GeneralServices, LibrarianServices, MemberServices
 from .acc_verify import login, sign_up
-import sys, time
-
+from .actions import actions
 
 class UserInteraction:
     # for aethetic purposes
@@ -13,91 +11,19 @@ class UserInteraction:
         self.greet()
         self.how_to_use()   
         self.user_status()
+        
+        try:
+            while True:
+                print(self.linebreak)
+                user_action = str(input("What do you want to do? -> ")).strip()
+                actions(user_action, self.user_access)
+        
+        except AttributeError:
+            print(f'\nAccess Denied. User tried to access a command beyond their role.')
+            print(f'Access limited to {self.user_access}.')
 
-        # separates user access to different methods based on user's role.
-        if self.user_access == 'librarian':
-            service = LibrarianServices()
-        elif self.user_access == 'member':
-            service = MemberServices()
-        else:
-            service = GeneralServices()
-
-
-        while True:
-            print(self.linebreak)
-            activity = str(input("What do you want to do? -> ")).strip()  
-            try:
-                match activity:
-                    # GENERAL ACCESS COMMAND
-                    case 'is_available':
-                        pass
-                    
-                    case 'user_borrow_history':
-                        pass
-                    
-                    case 'book_borrow_history':
-                        pass
-                    
-                    case 'get_written_books':
-                        pass
-                    
-                    case 'user_metrics':
-                        pass
-                    
-                    case 'book_metrics':
-                        pass
-
-
-                    # LIBRARIAN-ONLY COMMANDS
-                    case 'add_user':
-                        pass
-
-                    case 'add_book':
-                        pass
-
-                    case 'update_user':
-                        pass
-
-                    case 'update_book':
-                        pass
-
-                    case 'update_author':
-                        pass
-
-                    case 'update_borrow':
-                        pass
-
-                    case 'remove_user':
-                        pass
-
-                    case 'remove_book':
-                        pass
-
-
-                    # MEMBER-ONLY COMMANDS
-                    case 'borrow_book':
-                        pass
-
-                    case 'return_book':
-                        pass
-
-
-                    # MISCELLANEOUS/SYSTEM COMMANDS
-                    case 'stop' | 'end':
-                        print('Exiting the program. Goodbye!')
-                        time.sleep(2)
-                        sys.exit()
-
-                    case 'help':
-                        self.help()
-                    
-                    case _:
-                        print('Invalid command. Try again.')
-            
-            except AttributeError:
-                print(f'Access Denied. User tried to access a command beyond their role.')
-                print(f'Access limited to {self.user_access}.')
-
+        except Exception as e:
+            print(f"ERROR: {e}")
 
 
     def user_status(self):
@@ -139,7 +65,7 @@ class UserInteraction:
 
     def help(self):
         """ Provides the list of commands users can use to navigate the program. """
-        general_comamnds = {
+        self.general_commands = {
             "search": "Let's you lookup more info about a specific user, book, or author.", 
             "is_available": "Let's you see if a book is currently available for borrow.",
             "user_borrow_history": "Lets's you see the list of books borrowed by the specified user.",
@@ -150,7 +76,7 @@ class UserInteraction:
             }
 
 
-        librarian_commands = {
+        self.librarian_commands = {
             "add_user": "For registering new users into the program.",
             "add_book": "For adding new books to the library.",
             "update_user": "For updating the details of the specified user. Can only update information one at a time.",
@@ -162,25 +88,27 @@ class UserInteraction:
         }
 
 
-        member_commands = {
+        self.member_commands = {
             "borrow_book": "Let's the user borrow a book from the library if available. Return deadline is two weeks.",
             "return_book": "Let's the user return a book they have borrowed back to the library."
         }
 
-        system_commands = {
+        self.system_commands = {
             "stop/end": "Stops the program.",
             "...": "..."
         }
 
-        commands_list = {"GENERAL COMMANDS": general_comamnds,
-                         "LIBRARIAN-ONLY COMMANDS": librarian_commands,
-                         "MEMBER-ONLY COMMANDS": member_commands,
-                         "SYSTEM COMMANDS": system_commands}
+        commands_list = {"GENERAL COMMANDS": self.general_commands,
+                         "LIBRARIAN-ONLY COMMANDS": self.librarian_commands,
+                         "MEMBER-ONLY COMMANDS": self.member_commands,
+                         "SYSTEM COMMANDS": self.system_commands}
         
         # displays the commands list
-        print('\n\nHere are the list of commands that may help you navigate this program.\n')
+        print('Here are the list of commands that may help you navigate this program.\n')
         for label, commands in commands_list.items():
             print(label)
             for command, description in commands.items():
                 print(f"{command}: {description}")
             print()
+
+        
