@@ -335,6 +335,9 @@ class LibrarianServices(GeneralServices):
 
 
 class MemberServices(GeneralServices):
+    def __init__(self, file='data/storage.json'):
+        super().__init__(file)
+
     """ BORROW-RELATED OPERATIONS FOR MEMBERS """
     def borrow_book(self, title: str, borrower: str):
         # generates the date today
