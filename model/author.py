@@ -1,7 +1,7 @@
 """ Here is the blueprint for the author object """
 
 class Author:
-    def __init__(self, name: str, age='Unknown', birthday='Unknown', nationality='Unknown', books=[]):
+    def __init__(self, name: str, age='unknown', birthday='unknown', nationality='unknown', books=[]):
         self.name = name
         self.age = age
         self.birthday = birthday
