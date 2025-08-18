@@ -17,6 +17,7 @@ class UserInteraction:
             while True:
                 print(self.linebreak)
                 user_action = str(input("What do you want to do? -> ")).strip()
+                print()
                 action(user_action, self.user_access)
         
         except AttributeError:

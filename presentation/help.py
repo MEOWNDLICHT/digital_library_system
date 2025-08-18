@@ -43,7 +43,7 @@ def help():
                         "SYSTEM COMMANDS": system_commands}
     
     # displays the commands list
-    print('\nHere are the list of commands that may help you navigate this program.\n')
+    print('Here are the list of commands that may help you navigate this program.\n')
     for label, commands in commands_list.items():
         print(label)
         for command, description in commands.items():
