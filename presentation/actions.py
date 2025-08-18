@@ -1,21 +1,22 @@
 """ Handles user actions when prompted what to do. """
 
 from services import LibrarianServices, MemberServices
+from .help import help
 import sys, time
 
 
-def actions(self, user_action, user_access):
+def action(action, access):
      # for aethetic purposes
     linebreak = "\n-----------------------------------------------------------------------------\n"
 
     # separates user access to different methods based on user's role.
-    if user_access == 'librarian':
+    if access == 'librarian':
         service = LibrarianServices()
-    elif user_access == 'member':
+    elif access == 'member':
         service = MemberServices()
 
 
-    match user_action:
+    match action:
         # GENERAL ACCESS COMMAND
         case 'is_available':
             pass
@@ -77,8 +78,7 @@ def actions(self, user_action, user_access):
             sys.exit()
 
         case 'help':
-            self.help()
+            help()
         
         case _:
             print('\nInvalid command. Try again.\n')
-
