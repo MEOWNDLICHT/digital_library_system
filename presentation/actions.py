@@ -66,7 +66,7 @@ def action(action, access):
                     email = ask_for('email')
                     age = ask_for('age')
                     service.add_user(username, email, age)
-                    print(f"User, '{username}', has been added to the database!")
+                    print(f"\nUser, '{username}', has been added to the database!")
 
 
                 case 'add_book':
@@ -80,11 +80,11 @@ def action(action, access):
                         book_genre = ask_for('genre')
                         restriction = ask_for('age rating')
                         service.add_book(book_title, author, quantity, publishing_date, book_genre, restriction)
-                        print(f"Book, '{book_title}', has been added to the database!")
+                        print(f"\nBook, '{book_title}', has been added to the database!")
                         return
                     
                     service.add_book(book_title, author, quantity)
-                    print(f"Book, '{book_title}', has been added to the database!")
+                    print(f"\nBook, '{book_title}', has been added to the database!")
 
 
                 case 'update_user':
@@ -100,7 +100,7 @@ def action(action, access):
                     field = ask_for('field name')
                     new_value = ask_for('new value')
                     service.update_book(book_title, field, new_value)
-                    print(f"Book's information has been updated!")
+                    print(f"\nBook's information has been updated!")
 
 
                 case 'update_author':
@@ -108,7 +108,7 @@ def action(action, access):
                     field = ask_for('field name')
                     new_value = ask_for('new value')
                     service.update_user(author, field, new_value)
-                    print(f"Author's information has been updated!")
+                    print(f"\nAuthor's information has been updated!")
 
 
                 case 'update_borrow':
@@ -117,19 +117,19 @@ def action(action, access):
                     field = ask_for('field name')
                     new_value = ask_for('new value')
                     service.update_user(book_title, username, field, new_value)
-                    print(f"User's borrow information has been updated!")
+                    print(f"\nUser's borrow information has been updated!")
 
 
                 case 'remove_user':
                     username = ask_for('username')
                     service.remove_user(username)
-                    print(f"User, {username}, has been removed!")
+                    print(f"\nUser, {username}, has been removed!")
 
 
                 case 'remove_book':
                     book_title = ask_for("book's title")
                     service.remove_user(book_title)
-                    print(f"Book, {book_title}, has been removed!")
+                    print(f"\nBook, {book_title}, has been removed!")
 
 
 
@@ -138,7 +138,7 @@ def action(action, access):
                     book_title = ask_for("book's title")
                     borrower = ask_for("borrower's name")
                     service.borrow_book(book_title, borrower)
-                    print(f"Book, {book_title}, has been successfuly borrowed!")
+                    print(f"\nBook, {book_title}, has been successfuly borrowed!")
                     print('Note that you must return the book within two weeks, or you may be penalized.')
                     print('Enjoy reading!')
 
@@ -148,7 +148,7 @@ def action(action, access):
                     book_title = ask_for("book's title")
                     borrower = ask_for("borrower's name")
                     service.borrow_book(book_title, borrower)
-                    print(f"Book, {book_title}, has been successfuly returned!")
+                    print(f"\nBook, {book_title}, has been successfuly returned!")
                     print('Thank you for reading!')
 
 
@@ -178,8 +178,8 @@ def ask_for(object: str):
         
         Returns:
             str: The user's answer.  """
-    if object == 'age':
-        info = int(input(f"Enter the age here -> "))
+    if object == "age" or object == "book's quantity":
+        info = int(input(f"Enter the {object} here -> "))
     else:
         info = input(f"Enter the {object} here -> ")
     return info

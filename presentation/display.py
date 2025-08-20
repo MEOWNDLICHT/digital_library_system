@@ -21,12 +21,8 @@ class UserInteraction:
                     action(user_action, self.user_access)
             
             except AttributeError:
-                print(f'\nAccess Denied. User tried to access a command beyond their role.')
+                print(f'\nACCESS DENIED.\nUser tried to access a command beyond their role.')
                 print(f'Access limited to {self.user_access}.')
-
-        # except Exception as e:
-        #     print(f"ERROR: {e}")
-
 
 
     def user_status(self):
