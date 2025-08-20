@@ -60,9 +60,6 @@ class GeneralServices():
                 str: 'Success!' if found, otherwise None."""
         if self.check.detect_empty_values(what_to_search, name):
             raise EmptyValueError()
-        elif what_to_search.lower() not in ['user', 'book', 'author']:
-            print('Search invalid. Can only search for user, book, and author.')
-            return 
         
         print(f'\nYOU SEARCHED FOR: {name}\n')
         match what_to_search:

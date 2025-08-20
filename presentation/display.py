@@ -13,16 +13,16 @@ class UserInteraction:
         self.how_to_use()   
         self.user_status()
         
-        try:
-            while True:
-                print(self.linebreak)
-                user_action = str(input("What do you want to do? -> ")).strip()
-                print()
-                action(user_action, self.user_access)
-        
-        except AttributeError:
-            print(f'\nAccess Denied. User tried to access a command beyond their role.')
-            print(f'Access limited to {self.user_access}.')
+        while True:
+            try:
+                    print(self.linebreak)
+                    user_action = str(input("What do you want to do? -> ")).strip()
+                    print()
+                    action(user_action, self.user_access)
+            
+            except AttributeError:
+                print(f'\nAccess Denied. User tried to access a command beyond their role.')
+                print(f'Access limited to {self.user_access}.')
 
         # except Exception as e:
         #     print(f"ERROR: {e}")
