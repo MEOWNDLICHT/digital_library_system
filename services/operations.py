@@ -41,13 +41,12 @@ class GeneralServices():
 
             Returns:
                 bool: True if available, otherwise False. """
-        book_is_available = self.library[title]['is_available']
 
         if self.check.detect_empty_values(title):
             raise EmptyValueError()
         elif not self.check.exists(book_title=title):
-            raise NameTakenError(title)
-        elif book_is_available == False:
+            raise NameNotFoundError(book_title=title)
+        elif self.library[title]['is_available'] == False:
             raise BookUnavailableError(title)
         else:
             print(f"Book requested, '{title}', is available for borrow!")
@@ -340,7 +339,7 @@ class MemberServices(GeneralServices):
 
     """ BORROW-RELATED OPERATIONS FOR MEMBERS """
     def borrow_book(self, title: str, borrower: str):
-        # generates the date today
+           # generates the date today
         borrowed_on = datetime.now()
 
         # sets a two-week deadline for borrowed_on
