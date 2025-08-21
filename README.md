@@ -33,13 +33,23 @@ Some methods work, but spaghetti code is lurking. Needs cleanup.
 ---
 
 ## Project Structure / Flow  
-#### main.py -> services -> data -> model  
+#### main.py -> presentaion -> services -> data -> model  
 
 
-main.py - this is where you should run the program  
+main.py - starting point  
+presentation - handles the CLI-interactions and display
 services - where the CRUD operations are properly handled and authenticated  
 data - where data is stored and updated  
 model - where the basic blueprints for accounts, users, and such are handled  
+
+---
+
+## STATUS  
+
+This project is almost done.  
+Just need to test everything and it should work relatively okayish.  
+It might still break if you deliberately try to do it. But overall it should be fine.  
+I don't wanna continue this anymore.  
 
 ---
 
