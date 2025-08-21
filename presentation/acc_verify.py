@@ -68,7 +68,7 @@ def sign_up():
 
             # creates the account.
             temporary_librarian_access.add_user(username, email, age)
-            print('\nAccount successfully created! Directing user to login now...')
+            print('\nAccount successfully created!\nDirecting user to login now...')
             break
 
         except (EmptyValueError, NameTakenError, InvalidAgeError, InvalidEmailError) as e:

@@ -14,7 +14,7 @@ class UserInteraction:
         self.user_status()
         
         # checks if user has successfuly log-on
-        if self.user_access:
+        if self.user_access is not None:
             while True:
                 try:
                         print(self.linebreak)
@@ -44,7 +44,7 @@ class UserInteraction:
                 sign_up()
             else:
                 # skip the iteration and start over again.
-                print(f"\nInvalid answer: {status}. Can't determine user's status.\n")
+                print(f"\nInvalid answer: '{status}'. Can't determine user's status.\n")
                 continue 
             
             # prompts the user to login.
