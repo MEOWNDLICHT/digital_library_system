@@ -61,7 +61,6 @@ class GeneralServices():
         if self.check.detect_empty_values(what_to_search, name):
             raise EmptyValueError()
         
-        print(f'\nYOU SEARCHED FOR: {name}\n')
         match what_to_search:
             case 'user':
                 if not self.check.exists(username=name):
