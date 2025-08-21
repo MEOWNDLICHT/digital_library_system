@@ -388,8 +388,19 @@ class MemberServices(GeneralServices):
             returned_date = datetime.now()
             return_info = [title, borrower, 'returned_on', returned_date]
 
-            # idk what to do with late returns for borrows.
+            # idk what to do with late returns for borrows. I could implement a penalty system. But idk.
             if self.check._is_borrow_overdue(title, borrower, returned_date):
                 print('Book returned late.')
 
+            # increases the book borrow count of user by 1, since book has been returned.
+            borrow_count = self.accounts[borrower]['borrow_count'] + 1
+            self.update.update_entry('accounts', borrower, 'borrow_count', borrow_count)
+
+            # removes the book title from borrow list.
+            borrowed_books = self.accounts[borrower]['borrowed_books']
+            if title in borrowed_books:
+                borrowed_books.remove(title)
+                self.update.update_entry('accounts', borrower, 'borrowed_books', borrowed_books)
+
+            # saves the update
             self.update.update_borrow(return_info)
