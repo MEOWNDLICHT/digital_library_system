@@ -2,7 +2,7 @@
 
 from services import LibrarianServices, MemberServices
 from .help import about_commands
-from services.error import EmptyValueError, NameNotFoundError, NameTakenError, InvalidAgeError, InvalidChangeError, InvalidEmailError, InvalidQuantityError, BookUnavailableError
+from services.error import EmptyValueError, NameNotFoundError, NameTakenError, InvalidAgeError, InvalidChangeError, InvalidEmailError, InvalidQuantityError, BookUnavailableError, BorrowLimitError
 import sys, time
 
 
@@ -168,7 +168,7 @@ def action(action, access):
                     print('\nInvalid command. Try again.')
 
 
-    except (EmptyValueError, NameNotFoundError, NameTakenError, InvalidAgeError, InvalidChangeError, InvalidEmailError, InvalidQuantityError, BookUnavailableError, ValueError) as e:
+    except (EmptyValueError, NameNotFoundError, NameTakenError, InvalidAgeError, InvalidChangeError, InvalidEmailError, InvalidQuantityError, BookUnavailableError, ValueError, BorrowLimitError) as e:
         print(f"ERROR: {e}")
 
 

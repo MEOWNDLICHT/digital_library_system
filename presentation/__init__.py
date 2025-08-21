@@ -1,4 +1,4 @@
 from .display import UserInteraction
 from .acc_verify import login, sign_up
 from .actions import action
-from .help import help
+from .help import about_commands
