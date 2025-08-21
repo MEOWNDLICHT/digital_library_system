@@ -79,3 +79,9 @@ class BookUnavailableError(Error):
     """ Raised when a book is currently unavailable for borrow. """
     def __init__(self, title):
         super().__init__(f"Book, '{title}', is unavailable for borrow.")
+
+
+class BorrowLimitError(Error):
+    """ Raised when the user has exceeded the maximum limit for book borrows. """
+    def __init__(self):
+        super().__init__("Maximum book borrow limit reached. Can't borrow more books.")

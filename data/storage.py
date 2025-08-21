@@ -30,8 +30,7 @@ class Create(GeneralDataHandling):
                                                 'age': user.age,
                                                 'id': user.id,
                                                 'role': user.role,
-                                                'remaining_borrows': user.remaining_borrow,
-                                                'borrow_limit': user.borrow_limit,
+                                                'borrow_count': user.borrow_count,
                                                 'borrowed_books': user.borrowed_books}
         self.save_changes()
 

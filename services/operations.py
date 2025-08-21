@@ -3,7 +3,7 @@
 from model import User, Author, Book, Borrow
 from data import Create, Update, Delete
 from .validation import Check
-from .error import EmptyValueError, NameTakenError, NameNotFoundError, InvalidAgeError, InvalidEmailError, InvalidChangeError, InvalidQuantityError, BookUnavailableError
+from .error import EmptyValueError, NameTakenError, NameNotFoundError, InvalidAgeError, InvalidEmailError, InvalidChangeError, InvalidQuantityError, BookUnavailableError, BorrowLimitError
 from .generate_id import generate_unique_id
 from datetime import datetime, timedelta
 import json
@@ -207,7 +207,7 @@ class LibrarianServices(GeneralServices):
             raise InvalidAgeError()
         elif field_name == 'role' and not self.check.is_valid(role=new_value):
             raise InvalidChangeError('role')
-        elif field_name in ['id', 'remaining_borrow']:
+        elif field_name in ['id', 'borrow_count']:
             raise InvalidChangeError('field', field_name)
         else:
             # update and save changes to json
@@ -244,7 +244,7 @@ class LibrarianServices(GeneralServices):
                 self.create.save_author(new_author)
         
             # updates the author's written books list.
-            written_books = self.data['authors'][author]['books']
+            written_books = self.authors[author]['books']
             if title not in written_books:
                 written_books.append(title)
                 self.update.update_entry(['authors', author, 'books', written_books])
@@ -354,6 +354,17 @@ class MemberServices(GeneralServices):
             # this makes the dates readable (format: weekday_name, month_name day, year)
             borrowed_on = borrowed_on.strftime("%A, %B %d, %Y")
             borrow_deadline = borrow_deadline.strftime("%A, %B %d, %Y")
+
+            # adds the book to the borrow_list of the user and monitors borrow count
+            borrowed_books = self.accounts[borrower]['borrowed_books']
+            borrow_count = self.accounts[borrower]['borrow_count']
+            
+            # saves the changes to the borrow list if valid, otherwise it raises an error
+            if title not in borrowed_books and borrow_count <= 10:
+                updated_borrowed_list = borrowed_books.append(title)
+                self.update.update_entry('accounts', borrower, 'borrowed_books', updated_borrowed_list)
+            else:
+                raise BorrowLimitError()
 
             # creates the borrow object and saves it to the database.
             new_borrow = Borrow(title, borrower, borrowed_on, borrow_deadline)
