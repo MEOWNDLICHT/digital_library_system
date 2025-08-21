@@ -14,17 +14,18 @@ class UserInteraction:
         self.user_status()
         
         # checks if user has successfuly log-on
-        if self.user_access is not None:
+        if self.login_status is not None: 
+            # asks the user for action or command
             while True:
                 try:
                         print(self.linebreak)
                         user_action = str(input("What do you want to do? -> ")).strip()
                         print()
-                        action(user_action, self.user_access)
+                        action(user_action, self.login_status)
                 
                 except AttributeError:
                     print(f'\nACCESS DENIED.\nUser tried to access a command beyond their role.')
-                    print(f'Access limited to {self.user_access}.')
+                    print(f'Access limited to {self.login_status[0]}.')
         else:
             # if unsuccessful, returns to login/sign-up status
             print('\nMaximum login attempt reached. Returning to start.\n')
@@ -48,7 +49,7 @@ class UserInteraction:
                 continue 
             
             # prompts the user to login.
-            self.user_access = login()
+            self.login_status = login()
             break
 
 

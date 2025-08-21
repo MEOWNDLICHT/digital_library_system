@@ -32,8 +32,8 @@ member_commands = {
 
 system_commands = {
     "stop/end": "Stops the program.",
-    "get_current_role": "...",
-    "my_info": "..."
+    "about_me": "Brings up relevant information about the current user.",
+    "updgrade": "Let's the user become a librarian."
 }
 
 

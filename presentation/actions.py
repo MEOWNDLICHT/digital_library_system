@@ -6,7 +6,9 @@ from services.error import EmptyValueError, NameNotFoundError, NameTakenError, I
 import sys, time
 
 
-def action(action, access):
+def action(action, login_status):
+    access, current_user = login_status
+
     # separates user access to different methods based on user's role.
     if access == 'librarian':
         service = LibrarianServices()
@@ -14,7 +16,7 @@ def action(action, access):
         service = MemberServices()
 
     try:
-        print(f"\nProceeding with {action}...\n")
+        print(f"\nProceeding with '{action}'...\n")
         match action.lower():
             # GENERAL ACCESS COMMAND
                 case 'is_available':
@@ -28,8 +30,9 @@ def action(action, access):
                     if what_to_search.lower() not in ['user', 'book', 'author']:
                         print('\nSearch invalid. Can only search for user, book, and author.')
                         return 
-        
+                    
                     name = ask_for(what_to_search.lower())
+                    print(f'\nYOU SEARCHED FOR: {name}\n')
                     service.search(what_to_search, name)
 
 
@@ -160,8 +163,25 @@ def action(action, access):
                     about_commands()
 
 
+                case 'about_me':
+                    print(f"Current user is '{current_user}'.")
+
+                    # displays all relevant information regarding the user
+                    service.search('user', current_user)
+            
+                
+                case 'upgrade':
+                    # checks if user is already a librarian
+                    if access == 'librarian':
+                        print('You are already a librarian.')
+                    else:
+                        # changes current user's role to librarian
+                        print(f"You are now a librarian!")
+                        service.update_user(current_user, 'role', 'librarian')
+
+
                 case _:
-                    print('\nInvalid command. Try again.')
+                    print('Invalid command. Try again.')
 
 
     except (EmptyValueError, NameNotFoundError, NameTakenError, InvalidAgeError, InvalidChangeError, InvalidEmailError, InvalidQuantityError, BookUnavailableError, ValueError, BorrowLimitError) as e:

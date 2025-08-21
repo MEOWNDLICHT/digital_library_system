@@ -18,7 +18,7 @@ def login(file='data/storage.json'):
     """ Authenticates the user if they already have an existing account.
         
         Returns:
-            attr: the user's role. """
+            attr: the user's role and name. """
     # checks if the json file exists and sets the default data structures
     if not os.path.exists(file):
         with open(file, "w") as create_file:
@@ -48,9 +48,10 @@ def login(file='data/storage.json'):
             if user_name not in accounts:
                 raise NameNotFoundError(username=user_name)
             else:
+                user_role = accounts[user_name].get("role")
                 print("\nLogin Successful!")
                 print(f"Welcome back, {user_name}!")
-                return accounts[user_name].get("role")
+                return [user_role, user_name]
         except NameNotFoundError as e:
             print(f'\nERROR: {e}')
     
