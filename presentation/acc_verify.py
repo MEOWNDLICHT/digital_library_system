@@ -34,10 +34,16 @@ def login(file='data/storage.json'):
 
     accounts = data['accounts']
     # loops until the user has logged into an account stored in the database.
+    login_attempt = 0
     while True:
         print(linebreak)
         print('LOGIN')
         user_name = str(input("Enter your username -> ")).strip()
+        login_attempt += 1
+
+        if login_attempt > 5:
+            return
+
         try:
             if user_name not in accounts:
                 raise NameNotFoundError(username=user_name)

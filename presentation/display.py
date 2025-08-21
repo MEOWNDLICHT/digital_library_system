@@ -10,19 +10,25 @@ class UserInteraction:
 
     def __init__(self):
         self.greet()
-        self.how_to_use()   
+        self.how_to_use()
         self.user_status()
         
-        while True:
-            try:
-                    print(self.linebreak)
-                    user_action = str(input("What do you want to do? -> ")).strip()
-                    print()
-                    action(user_action, self.user_access)
-            
-            except AttributeError:
-                print(f'\nACCESS DENIED.\nUser tried to access a command beyond their role.')
-                print(f'Access limited to {self.user_access}.')
+        # checks if user has successfuly log-on
+        if self.user_access:
+            while True:
+                try:
+                        print(self.linebreak)
+                        user_action = str(input("What do you want to do? -> ")).strip()
+                        print()
+                        action(user_action, self.user_access)
+                
+                except AttributeError:
+                    print(f'\nACCESS DENIED.\nUser tried to access a command beyond their role.')
+                    print(f'Access limited to {self.user_access}.')
+        else:
+            # if unsuccessful, returns to login/sign-up status
+            print('\nMaximum login attempt reached. Returning to start.\n')
+            self.user_status()
 
 
     def user_status(self):
