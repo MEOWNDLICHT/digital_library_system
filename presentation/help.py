@@ -55,4 +55,8 @@ def about_commands():
             print(f"{command}: {description}")
         print()
 
-    
+
+
+def about_me():
+    """ Provides the personal information of the current user. """
+    pass

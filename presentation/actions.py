@@ -7,9 +7,6 @@ import sys, time
 
 
 def action(action, access):
-     # for aethetic purposes
-    linebreak = "\n-----------------------------------------------------------------------------\n"
-
     # separates user access to different methods based on user's role.
     if access == 'librarian':
         service = LibrarianServices()
@@ -141,7 +138,6 @@ def action(action, access):
                     print(f"\nBook, {book_title}, has been successfuly borrowed!")
                     print('Note that you must return the book within two weeks, or you may be penalized.')
                     print('Enjoy reading!')
-
 
 
                 case 'return_book':
